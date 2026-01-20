@@ -1,0 +1,25 @@
+###
+POST http://localhost:4000/Api/Registrar
+Content-Type: application/json
+
+{
+  "Name": "Ricardo",
+  "Email": "r0cardo@example.com",
+  "Password": "123456"
+}
+
+###
+POST http://localhost:4000/Api/Sesion
+Content-Type: application/json
+
+{
+  "Name": "Ricardo",
+  "Pass": "123456"
+}
+###
+POST http://localhost:4000/Api/Perfil
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjoiUmljYXJkbyIsIkVtYWlsIjoicmljYXJkb0BleGFtcGxlLmNvbSIsImlhdCI6MTc2NDY5NDYxMywiZXhwIjoxNzY0Njk4MjEzfQ.5C7oAvZFAEbonvAtAuazITkY3aTKOr5EXH0pzc3TUA8 
+Content-Type: application/json
+
+###
+POST http://localhost:4000/Api/Logout

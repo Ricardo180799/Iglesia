@@ -1,0 +1,5 @@
+###
+GET http://localhost:4000/Api/home
+Content-Type: application/json
+###
+GET http://localhost:4000/Api/especificTestimonies/1

@@ -24,6 +24,7 @@ exports.DeleteActivitiess = async (req, res, next) => {
 };
 // Actualiza un post
 exports.UpdateActivitiess = async (req, res, next) => {
+  
   const { Title, Enlace, Text, Activity_Date, ID } = req.body;
 
   try {
@@ -35,6 +36,7 @@ exports.UpdateActivitiess = async (req, res, next) => {
       FinalVisual = Enlace;
     }
 
+   
     await UpdateActivities(Title, FinalVisual, Text, Activity_Date, ID);
 
     res.json({ message: "Actividad actualizada correctamente" });
@@ -53,7 +55,7 @@ exports.AddActivitiess = async (req, res, next) => {
     } else if (Enlace && Enlace !== "null" && Enlace !== "") {
       FinalVisual = Enlace;
     }
-    console.log("Datosssss... ", Title, FinalVisual, Text, Activity_Date);
+
     await AddActivities(Title, FinalVisual, Text, Activity_Date);
 
     return res.json({ message: "Actividad añadida correctamente" });

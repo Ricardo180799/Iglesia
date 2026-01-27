@@ -130,9 +130,9 @@ exports.Logout = (req, res) => {
 exports.Perfil = async (req, res) => {
   const email = req.usuario.Email;
 
-  console.log("Email" + email);
+  
   const info = await Perfils(email);
-  console.log("info controller " + info);
+ 
   res.json({ info: info });
 };
 exports.ADDRol = async (req, res) => {

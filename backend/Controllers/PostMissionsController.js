@@ -38,14 +38,14 @@ exports.UpdatePostmissionss = async (req, res, next) => {
   const { ID_Missions, Title, Slug, Content, Link, Created_by, ID } = req.body;
 
   try {
-    // Procesamiento del recurso visual
+    
     let finalVisual = null;
 
     if (req.file) {
-      // Prioridad 1: Archivo físico subido
+      
       finalVisual = req.file.filename;
     } else if (Link && Link !== "" && Link !== "null") {
-      // Prioridad 2: Enlace de texto (URL)
+      
       finalVisual = Link;
     }
 
@@ -54,7 +54,7 @@ exports.UpdatePostmissionss = async (req, res, next) => {
       Title,
       Slug,
       Content,
-      finalVisual, // Se envía la variable procesada
+      finalVisual, 
       Created_by,
       ID
     );

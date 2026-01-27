@@ -27,11 +27,7 @@ exports.Sesion = async (Name, Pass) => {
 };
 exports.Perfils = async (email) => {
   const info = await Perfil(email);
-  console.log({
-    usuario: info[0].Name,
-    Creado: info[0].Create_At,
-    Avatar: info[0].Avatar,
-  });
+  
 
   return {
     usuario: info[0].Name,

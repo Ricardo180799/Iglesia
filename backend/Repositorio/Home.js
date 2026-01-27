@@ -90,7 +90,7 @@ exports.getNumber = async (campo) => {
   const query = `SELECT \`${campo}\`  AS valor FROM home LIMIT 1`;
   try {
     const [[info]] = await db.query(query);
-    console.log(info.valor);
+   
     return info.valor;
   } catch (err) {
     throw err;

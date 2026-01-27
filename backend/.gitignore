@@ -1,1 +1,14 @@
+# Archivos de configuración personal (Secretos)
 .env
+.env.local
+
+# Dependencias (Esto pesa muchísimo, no se sube)
+node_modules/
+dist/
+build/
+
+# Archivos del sistema y logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store

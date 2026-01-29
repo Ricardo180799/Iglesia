@@ -1,10 +1,10 @@
 const db = require("../Config/DB");
 const bcrypt = require("bcrypt");
 
-exports.getUsers = async () => {
-  const query = "SELECT * FROM users";
+exports.getUsers = async (Name) => {
+   const query = "SELECT * FROM users WHERE Name = ?";
   try {
-    const [info] = await db.query(query);
+    const [info] = await db.query(query,[Name]);
     return info;
   } catch (err) {
     throw err;
@@ -23,7 +23,7 @@ exports.GetId = async (email) => {
 exports.Añadir = async (Name, LastName, Email, Password, Avatar = null) => {
   try {
     const pass = await bcrypt.hash(Password, 10);
-    await db.execute(
+    const  [result] = await db.execute(
       "INSERT INTO users (Name,LastName,Email,Password,Avatar) VALUES(?,?,?,?,?)",
       [
         Name ?? null,
@@ -34,7 +34,7 @@ exports.Añadir = async (Name, LastName, Email, Password, Avatar = null) => {
       ]
     );
     const message = "Usuario insertado correctamente";
-    return { message: message, contraseña: pass };
+    return { message: message,ID: result.insertId};
   } catch (err) {
     console.error("Error añadiendo a usuario", err);
     throw err;
@@ -73,12 +73,12 @@ exports.GetIdRol = async (id) => {
 };
 exports.GetRol = async (ids) => {
   const query = "SELECT NAME FROM roles WHERE ID = ?";
-  console.log("empezando");
+  
   try {
     const roles = await Promise.all(
       ids.map(async (e) => {
         const [[user]] = await db.query(query, [e.Id_Rol]);
-        console.log(user);
+        
         return user.NAME;
       })
     );
@@ -147,5 +147,23 @@ exports.UpdateRol = async (Id_User, Roles, IDM) => {
   } catch (err) {
     console.error("Error en repositorio UpdateRol:", err);
     throw err;
+  }
+};
+exports.verifyEmail = async (Email) => {
+  const query = "SELECT * FROM users WHERE Email = ?";
+
+  try {
+    
+    const [rows] = await db.query(query, [Email]);
+
+  
+    return rows.length > 0;
+
+  } catch (err) {
+    
+    console.error("Fallo crítico en verifyEmail:", err.message);
+    
+   
+    throw new Error("DB_CONNECTION_ERROR");
   }
 };

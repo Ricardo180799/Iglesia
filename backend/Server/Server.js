@@ -23,6 +23,7 @@ const routerStripe = require("../Router/RouterStripe");
 const routerActivities = require("../Router/RouterActivities");
 const routerMissions = require("../Router/RouterMissions");
 const routerRefresh = require("../Router/RouterRefreshToken");
+const AppError = require ("../Utils/AppError")
 const app = express();
 
 const dbOptions = {
@@ -74,7 +75,19 @@ app.use("/Api", routerAssets);
 app.use("/Api", routerActivities);
 app.use("/Api", routerMissions);
 app.use("/Api", routerRefresh);
+app.all('*', (req, res, next) => {
+  next(new AppError(`No se pudo encontrar ${req.originalUrl} en este servidor`, 404));
+});
 app.use(Manejador);
-app.listen(4000, () => {
+const server = app.listen(4000, () => {
   console.log("Server escuchando en el puerto 4000");
+});
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION! 💥 Apagando...');
+  console.log(err.name, err.message);
+  
+ 
+  server.close(() => {
+    process.exit(1); 
+  });
 });

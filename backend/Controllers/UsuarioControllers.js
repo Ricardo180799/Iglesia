@@ -32,28 +32,31 @@ exports.getUsersAlls = async (req, res) => {
   }
 };
 exports.Registrarse = async (req, res, next) => {
-  const { Name, LastName, Email, Password, Avatar } = req.body;
-
   try {
-    const respuesta = await Registro(Email);
-    if (!respuesta) {
-      const message = await Añadir(Name, LastName, Email, Password, Avatar);
+    
+    const registro = await Registro(req.body);
 
-      const ID = await GetId(Email);
+    
+    const { ID, Name, Email, Rol } = registro.data;
 
-      const payload = { User: Name, Email: Email, ID: ID, Rol: "Miembro" };
-      const token = sign(payload, claveT, "1h");
-      await AddRol(ID, 5, null);
-      return res.json({ message: message, token: token, ID: ID });
-    } else
-      return res
-        .status(401)
-        .json({ message: "El correo electronico ya esta registrado" });
+    
+    const payload = { User: Name, Email: Email, ID: ID, Rol: Rol };
+    const token = jwt.sign(payload, claveT, { expiresIn: "1h" });
+
+   
+    return res.status(201).json({ 
+      message: registro.message, 
+      token: token, 
+      ID: ID 
+    });
+
   } catch (err) {
+    if (err.message === "EMAIL_ALREADY_EXISTS") {
+      return res.status(400).json({ message: "El correo electrónico ya está registrado" });
+    }
     next(err);
   }
 };
-
 exports.Sesions = async (req, res, next) => {
   const { Name, Pass } = req.body;
 

@@ -15,7 +15,7 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
   if (token) {
-    console.log("Token actualizado:", token);
+   
   }
 }, [token])
   ;
@@ -52,7 +52,7 @@ export default function RegisterForm() {
 
   async function handleSubmit(e) {
   e.preventDefault();
-  console.log("handleSubmit ejecutado");
+  
 
   const error = validate();
   if (error) {
@@ -64,7 +64,7 @@ export default function RegisterForm() {
   setInfo(null);
 
   try {
-    console.log("Antes de Registry");
+    
     const response = await Registry({
       Name: form.Nombre,
       LastName: form.Apellidos,
@@ -72,13 +72,13 @@ export default function RegisterForm() {
       Password: form.Password,
       Avatar: form.Avatar || null,
     });
-    console.log("Después de Registry", response);
+    
 
     setInfo(response.message?.message || "Registrado con éxito");
     dispatch(saveToken(response.token));
     dispatch(saveToken(response.ID));
   } catch(err) {
-    console.error("Error Registry:", err);
+   ;
     setInfo(err.message || "Error al registrar usuario");
   } finally {
     setLoading(false);

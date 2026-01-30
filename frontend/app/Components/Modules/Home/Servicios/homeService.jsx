@@ -12,7 +12,7 @@ export const getEspecificTestimonie = async (ID) => {
 };
 export const AddTestimonie = async(info)=>{
   try{
-    const response= await api.post(`/Api/Testimonies/SendTestimonies`,info)
+    const response= await api.post("/Api/Testimonies/SendTestimonies",info)
     return response.data
   }catch(err){const message =
       err.response?.data?.message ||

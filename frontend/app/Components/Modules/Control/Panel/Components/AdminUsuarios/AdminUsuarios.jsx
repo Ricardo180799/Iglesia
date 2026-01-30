@@ -10,7 +10,7 @@ export default function ListaUsuariosDashboard() {
   const[busqueda,setBusqueda]=useState("")
   const[marcado,setMarcado]=useState("")
   const[procesar,setProcesar]=useState(info)
-  console.log("infoerewrfewfg ",info)
+  
   useEffect(() => {
   if (!info) return;
 

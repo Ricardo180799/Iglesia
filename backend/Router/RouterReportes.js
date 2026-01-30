@@ -8,33 +8,38 @@ const {
 } = require("../Controllers/ReportesController");
 const { Auth } = require("./MidlewareAuth");
 const { Allow } = require("./MidlewareRol");
+const { audits } = require("../Controllers/AuditController");
 
-//Obtiene Gastos y Entradas Total
 router.get(
   "/Panel/Tesoreria/Reportes/getBalances",
   Auth,
   Allow("Pastor", "Tesorero", "Dev", "Admin"),
-  getBalances
+  getBalances,
+  audits("Lectura", "Reportes", "Consulta de balance total de gastos y entradas")
 );
-//Obtiene Entradas por mes
+
 router.get(
   "/Panel/Tesoreria/Reportes/getIncomesByMonths",
   Auth,
   Allow("Pastor", "Tesorero", "Dev", "Admin"),
-  getIncomesByMonths
+  getIncomesByMonths,
+  audits("Lectura", "Reportes", "Consulta de entradas mensuales")
 );
-//Obtiene Salidas por mes
+
 router.get(
   "/Panel/Tesoreria/Reportes/getExpensesByMonths",
   Auth,
   Allow("Pastor", "Tesorero", "Dev", "Admin"),
-  getExpensesByMonths
+  getExpensesByMonths,
+  audits("Lectura", "Reportes", "Consulta de salidas mensuales")
 );
-//Obtiene Balance general
+
 router.get(
   "/Panel/Tesoreria/Reportes/getMontlyReports",
   Auth,
   Allow("Pastor", "Tesorero", "Dev", "Admin"),
-  getMontlyReports
+  getMontlyReports,
+  audits("Lectura", "Reportes", "Consulta de balance general mensual")
 );
+
 module.exports = router;

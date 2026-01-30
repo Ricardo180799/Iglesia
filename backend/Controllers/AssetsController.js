@@ -4,95 +4,93 @@ const {
   UpdateAssets,
   AddAssets,
 } = require("../Repositorio/Assets");
-exports.getAssetss = async (req, res) => {
-  try {
-    const info = await getAssets();
-    return res.json(info);
-  } catch (err) {
-    return res.status(500).json({ error: "Error obteniendo inventario" });
-  }
-};
+const catchAsync = require("../Utils/CatchAsync");
+const AppError = require("../Utils/AppError");
 
-exports.DeleteAssetss = async (req, res) => {
-  try {
-    const { Id } = req.params;
+exports.getAssetss = catchAsync(async (req, res, next) => {
+  const info = await getAssets();
 
-    if (!Id) return res.status(400).json({ error: "ID requerido" });
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
 
-    const respuesta = await DeleteAssets(Id);
+exports.DeleteAssetss = catchAsync(async (req, res, next) => {
+  const { ID } = req.params;
 
-    if (respuesta) {
-      return res.json({ message: "Recurso eliminado correctamente" });
-    }
-  } catch (err) {
-    return res.status(500).json({ error: "Error eliminando recurso" });
-  }
-};
+  if (!ID) return next(new AppError("ID requerido", 400));
 
-exports.UpdateAssetss = async (req, res) => {
-  try {
-    const {
-      Name,
-      Cantidad,
-      Category,
-      Adquisition_date,
-      Price,
-      Status,
-      Locations,
-      Responsible_id,
-      Id,
-    } = req.body;
+  await DeleteAssets(ID);
 
-    if (!Id) return res.status(400).json({ error: "ID requerido" });
-    const respuesta = await UpdateAssets(
-      Name,
-      Cantidad,
-      Category,
-      Adquisition_date,
-      Price,
-      Status,
-      Locations,
-      Responsible_id,
-      Id
-    );
+  res.locals.response = {
+    status: 200,
+    body: { message: "Recurso eliminado correctamente" }
+  };
+  next();
+});
 
-    if (respuesta) {
-      return res.json({ message: "Inventario actualizado correctamente" });
-    }
-  } catch (err) {
-    return res.status(500).json({ error: "Error actualizando inventario" });
-  }
-};
+exports.UpdateAssetss = catchAsync(async (req, res, next) => {
+  const {
+    Name,
+    Cantidad,
+    Category,
+    Adquisition_date,
+    Price,
+    Status,
+    Locations,
+    Responsible_id,
+    ID,
+  } = req.body;
 
-exports.AddAssetss = async (req, res) => {
-  try {
-    const {
-      Name = "",
-      Category = "",
-      Cantidad = 0,
-      Adquisition_date = null,
-      Price = 0,
-      Status = "nuevo",
-      Locations = "",
-      Responsible_id = 0,
-    } = req.body;
+  if (!ID) return next(new AppError("ID requerido", 400));
 
-    const respuesta = await AddAssets(
-      Name,
-      Cantidad,
-      Category,
-      Adquisition_date,
-      Price,
-      Status,
-      Locations,
-      Responsible_id
-    );
+  await UpdateAssets(
+    Name,
+    Cantidad,
+    Category,
+    Adquisition_date,
+    Price,
+    Status,
+    Locations,
+    Responsible_id,
+    ID
+  );
 
-    if (respuesta) {
-      return res.json({ message: "Recurso añadido correctamente" });
-    }
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Error añadiendo recurso" });
-  }
-};
+  res.locals.response = {
+    status: 200,
+    body: { message: "Inventario actualizado correctamente" }
+  };
+  next();
+});
+
+exports.AddAssetss = catchAsync(async (req, res, next) => {
+  const {
+    Name = "",
+    Category = "",
+    Cantidad = 0,
+    Adquisition_date = null,
+    Price = 0,
+    Status = "nuevo",
+    Locations = "",
+    Responsible_id = 0,
+  } = req.body;
+
+  await AddAssets(
+    Name,
+    Cantidad,
+    Category,
+    Adquisition_date,
+    Price,
+    Status,
+    Locations,
+    Responsible_id
+  );
+
+  res.locals.response = {
+    status: 201,
+    body: { message: "Recurso añadido correctamente" }
+  };
+  next();
+});

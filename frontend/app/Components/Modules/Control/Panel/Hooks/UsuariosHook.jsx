@@ -13,7 +13,7 @@ export function useUsers(){
     try {
       const data = await getUsersALL();
       setInfo(data);
-      console.log(data)
+      
     } catch (err) {
       setError(err);
     } finally {

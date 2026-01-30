@@ -4,62 +4,86 @@ const {
   UpdateIncome,
   AddIncome,
 } = require("../Repositorio/Incomes");
+const AppError = require("../Utils/AppError");
+const catchAsync = require("../Utils/CatchAsync");
 
-exports.getIncomess = async (req, res, next) => {
-  try {
-    const info = await getIncomes();
+exports.getIncomess = catchAsync(async (req, res, next) => {
+  const info = await getIncomes();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
 
-    return res.json({ info });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.DeleteIncomes = async (req, res, next) => {
-  const { id } = req.body;
-  try {
-    await DeleteIncome(id);
+exports.DeleteIncomes = catchAsync(async (req, res, next) => {
+  const { ID } = req.params;
+  if (!ID) return next(new AppError("ID de ingreso requerido", 400));
 
-    return res.json({ message: "Income eliminado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.UpdateIncomes = async (req, res, next) => {
-  const { Source, User_Id, Type, Amount, Description, Date, Created_By, ID } =
-    req.body;
-  try {
-    await UpdateIncome(
-      Source,
-      User_Id,
-      Type,
-      Amount,
-      Description,
-      Date,
-      Created_By,
-      ID
-    );
+  await DeleteIncome(ID);
 
-    res.json({ message: "Income actualizado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.AddIncomes = async (req, res, next) => {
-  const { Source, User_Id, Type, Amount, Description, Dates, Created_By } =
-    req.body;
-  try {
-    await AddIncome(
-      Source,
-      User_Id,
-      Type,
-      Amount,
-      Description,
-      Dates,
-      Created_By
-    );
+  res.locals.response = {
+    status: 200,
+    body: { message: "Ingreso eliminado correctamente" }
+  };
+  next();
+});
 
-    res.json({ message: "Income añadido correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
+exports.UpdateIncomes = catchAsync(async (req, res, next) => {
+  const {
+    Source,
+    User_Id,
+    Type,
+    Amount,
+    Description,
+    Date,
+    Created_By,
+    ID,
+  } = req.body;
+
+  await UpdateIncome(
+    Source,
+    User_Id,
+    Type,
+    Amount,
+    Description,
+    Date,
+    Created_By,
+    ID
+  );
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Ingreso actualizado correctamente" }
+  };
+  next();
+});
+
+exports.AddIncomes = catchAsync(async (req, res, next) => {
+  const {
+    Source,
+    User_Id,
+    Type,
+    Amount,
+    Description,
+    Dates,
+    Created_By,
+  } = req.body;
+
+  await AddIncome(
+    Source,
+    User_Id,
+    Type,
+    Amount,
+    Description,
+    Dates,
+    Created_By
+  );
+
+  res.locals.response = {
+    status: 201,
+    body: { message: "Ingreso añadido correctamente" }
+  };
+  next();
+});

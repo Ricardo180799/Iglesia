@@ -9,19 +9,26 @@ const {
 } = require("../Controllers/HomeController");
 const { audits } = require("../Controllers/AuditController");
 
-//Obtiene configuracion del home
-router.get("/Panel/homee", Auth, Allow("Pastor"), getHomeConfigs);
+router.get(
+  "/Panel/homee", 
+  Auth, 
+  Allow("Pastor"), 
+  getHomeConfigs,
+  audits("Lectura", "Home", "Consulta de configuración administrativa del Home")
+);
 
-//Obtiene La Info del home para el frontend
-router.get("/home", getHomesFront);
+router.get(
+  "/home", 
+  getHomesFront,
+  audits("Lectura", "Home", "Consulta de datos para el Frontend")
+);
 
-//Actualiza una configuracion Home
 router.put(
   "/Panel/home/UpdateHomes",
   Auth,
   Allow("Pastor"),
-  audits("Update", "Homee", "Se actualizó la configuración del home "),
-  UpdateHomes
+  UpdateHomes,
+  audits("Update", "Home", "Se actualizó la configuración del home")
 );
 
 module.exports = router;

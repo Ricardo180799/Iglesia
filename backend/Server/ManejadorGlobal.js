@@ -1,12 +1,9 @@
-const AppError = require("../Utils/AppError");
-
 exports.Manejador = (err, req, res, next) => {
-  
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  
-  if (process.env.NODE_ENV === 'development') {
+  // Si estás en desarrollo o si NO has definido NODE_ENV aún
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     return res.status(err.statusCode).json({
       status: err.status,
       error: err,
@@ -15,23 +12,19 @@ exports.Manejador = (err, req, res, next) => {
     });
   }
 
-  
+  // Si estás en producción
   if (process.env.NODE_ENV === 'production') {
-  
-    if (err instanceof AppError) {
-    
+    if (err.isOperational) { // Usualmente AppError marca isOperational = true
       return res.status(err.statusCode).json({
         status: err.status,
         message: err.message
       });
     }
 
-    
-    console.error('ERROR CRÍTICO (No controlado) 💥:', err);
-
+    console.error('ERROR CRÍTICO 💥:', err);
     return res.status(500).json({
       status: 'error',
-      message: 'Algo salió muy mal en el servidor'
+      message: 'Algo salió muy mal'
     });
   }
 };

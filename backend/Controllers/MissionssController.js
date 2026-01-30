@@ -5,37 +5,44 @@ const {
   UpdateMissions,
   AddMissions,
 } = require("../Repositorio/Missionss");
+const AppError = require("../Utils/AppError");
+const catchAsync = require("../Utils/CatchAsync");
 
-exports.getMissionss = async (req, res, next) => {
-  try {
-    const info = await getMissions();
-    res.json(info);
-  } catch (err) {
-    next(err);
-  }
-};
-exports.getEspecificMissionss = async (req, res, next) => {
+exports.getMissionss = catchAsync(async (req, res, next) => {
+  const info = await getMissions();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
+
+exports.getEspecificMissionss = catchAsync(async (req, res, next) => {
   const { ID } = req.params;
+  const info = await getEspecificMissions(ID);
 
-  try {
-    const info = await getEspecificMissions(ID);
+  if (!info) return next(new AppError("Misión no encontrada", 404));
 
-    res.json(info);
-  } catch (err) {
-    next(err);
-  }
-};
-exports.DeleteMissionss = async (req, res, next) => {
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
+
+exports.DeleteMissionss = catchAsync(async (req, res, next) => {
   const { ID } = req.params;
-  try {
-    await DeleteMissions(ID);
+  await DeleteMissions(ID);
 
-    return res.json({ message: "Misión eliminada correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.UpdateMissionss = async (req, res, next) => {
+  res.locals.response = {
+    status: 200,
+    body: { message: "Misión eliminada correctamente" }
+  };
+  next();
+});
+
+exports.UpdateMissionss = catchAsync(async (req, res, next) => {
   const {
     Name,
     Link,
@@ -48,58 +55,55 @@ exports.UpdateMissionss = async (req, res, next) => {
     ID,
   } = req.body;
 
-  try {
-    let finalVisual = null;
-
-    if (req.file) {
-      finalVisual = req.file.filename;
-    } else if (Link && Link !== "" && Link !== "null") {
-      finalVisual = Link;
-    }
-
-    await UpdateMissions(
-      Name,
-      finalVisual,
-      Locations,
-      Description,
-      Manager,
-      Members,
-      Start_Date,
-      Update_By,
-      ID,
-    );
-
-    res.json({ message: "Misión actualizada correctamente" });
-  } catch (err) {
-    next(err);
+  let finalVisual = null;
+  if (req.file) {
+    finalVisual = req.file.filename;
+  } else if (Link && Link !== "" && Link !== "null") {
+    finalVisual = Link;
   }
-};
 
-exports.AddMissionss = async (req, res, next) => {
-  const { Name, Link, Locations, Description, Manager, Members, Start_Date } =
-    req.body;
+  await UpdateMissions(
+    Name,
+    finalVisual,
+    Locations,
+    Description,
+    Manager,
+    Members,
+    Start_Date,
+    Update_By,
+    ID
+  );
 
-  try {
-    let finalVisual = null;
+  res.locals.response = {
+    status: 200,
+    body: { message: "Misión actualizada correctamente" }
+  };
+  next();
+});
 
-    if (req.file) {
-      finalVisual = req.file.filename;
-    } else if (Link && Link !== "" && Link !== "null") {
-      finalVisual = Link;
-    }
+exports.AddMissionss = catchAsync(async (req, res, next) => {
+  const { Name, Link, Locations, Description, Manager, Members, Start_Date } = req.body;
 
-    await AddMissions(
-      Name,
-      finalVisual,
-      Locations,
-      Description,
-      Manager,
-      Members,
-      Start_Date,
-    );
-
-    res.json({ message: "Misión añadida correctamente" });
-  } catch (err) {
-    next(err);
+  let finalVisual = null;
+  if (req.file) {
+    finalVisual = req.file.filename;
+  } else if (Link && Link !== "" && Link !== "null") {
+    finalVisual = Link;
   }
-};
+
+  await AddMissions(
+    Name,
+    finalVisual,
+    Locations,
+    Description,
+    Manager,
+    Members,
+    Start_Date
+  );
+
+  res.locals.response = {
+    status: 201,
+    body: { message: "Misión añadida correctamente" }
+  };
+  next();
+});

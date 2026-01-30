@@ -39,27 +39,22 @@ export default function TestimonyForm({ onClose }) {
     setInfo(null);
 
     const formData = new FormData();
-
     
     formData.append("Type", type);
     formData.append("Title", form.Title);
     formData.append("Author", form.Author);
     formData.append("Content", form.Content);
 
-    
     if (type === "Article") {
       formData.append("Text", form.Text);
     }
 
-    
+    // LÓGICA OPCIONAL: Solo añade si existen
     if (file) {
-    
       formData.append("File", file);
     } 
     else if (form.Enlace.trim() !== "") {
       const link = form.Enlace.trim();
-      
-      
       const esFormatoVideo =
         /\.(mp4|webm|ogg|mov)$/i.test(link) ||
         link.includes("youtube.com") ||
@@ -153,7 +148,8 @@ export default function TestimonyForm({ onClose }) {
         )}
 
         <div className="flex flex-col gap-6 p-6 bg-white/[0.02] rounded-3xl border border-white/[0.05]">
-          {/* Opción A: Archivo */}
+          <h3 className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest text-center">Multimedia (Opcional)</h3>
+          
           <div className={`flex flex-col gap-3 transition-all ${form.Enlace ? 'opacity-30 pointer-events-none scale-95' : 'opacity-100'}`}>
             <label className={labelStyles}>Subir desde PC</label>
             <div className="relative group">
@@ -171,7 +167,7 @@ export default function TestimonyForm({ onClose }) {
               </label>
               {file && (
                 <button type="button" onClick={() => setFile(null)} className="text-[10px] uppercase tracking-widest text-red-400 mt-2 hover:text-red-300 transition-colors ml-1 font-bold">
-                  ✕ Eliminar archivo seleccionado
+                  ✕ Eliminar archivo
                 </button>
               )}
             </div>
@@ -183,7 +179,6 @@ export default function TestimonyForm({ onClose }) {
             <div className="flex-grow border-t border-white/[0.05]"></div>
           </div>
 
-          {/* Opción B: Enlace */}
           <div className={`flex flex-col gap-3 transition-all ${file ? 'opacity-30 pointer-events-none scale-95' : 'opacity-100'}`}>
             <label className={labelStyles}>Enlace externo</label>
             <input 
@@ -205,7 +200,7 @@ export default function TestimonyForm({ onClose }) {
 
         <button 
           type="submit" 
-          disabled={loading || ContentWordCount > 50 || (!file && !form.Enlace.trim())} 
+          disabled={loading || ContentWordCount > 50} 
           className="mt-6 w-full bg-white text-black hover:bg-indigo-500 hover:text-white rounded-2xl py-5 font-black text-xs uppercase tracking-widest transition-all duration-500 disabled:opacity-20 disabled:cursor-not-allowed"
         >
           {loading ? "Enviando..." : "Enviar Testimonio"}

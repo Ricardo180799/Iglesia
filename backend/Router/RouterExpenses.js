@@ -10,31 +10,40 @@ const {
 } = require("../Controllers/ExpensesController");
 const { audits } = require("../Controllers/AuditController");
 
-//Obtiene Todos los expenses
-router.get("/Panel/Tesoreria/Expenses", getExpensess);
-//Añade un expense
+// Obtiene todos los gastos
+router.get(
+  "/Panel/Tesoreria/Expenses", 
+  Auth, 
+  Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  getExpensess,
+  audits("Lectura", "Expenses", "Consulta general de gastos")
+);
+
+// Añade un gasto
 router.post(
   "/Panel/Tesoreria/Expenses/Add",
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Add", "Expenses", "Se añadió un expense"),
-  AddExpensess
+  AddExpensess,
+  audits("Add", "Expenses", "Se añadió un gasto")
 );
 
-//Borra un expense
-router.post(
-  "/Panel/Tesoreia/Expenses/DeleteExpensess",
+
+router.delete(
+  `/Panel/Tesoreria/Expenses/Delete/ID`,
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Delete", "Expenses", "Se eliminó un expense"),
-  DeleteExpensess
+  DeleteExpensess,
+  audits("Delete", "Expenses", "Se eliminó un gasto")
 );
-//Actualiza un expense
-router.post(
-  "/Panel/Tesoreria/Expenses/UpdateExpensess",
+
+// Actualiza un gasto (Cambiado a PUT para seguir estándares REST)
+router.put(
+  "/Panel/Tesoreria/Expenses/Update",
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Update", "Expenses", "Se actualizó un expense"),
-  UpdateExpensess
+  UpdateExpensess,
+  audits("Update", "Expenses", "Se actualizó un gasto")
 );
+
 module.exports = router;

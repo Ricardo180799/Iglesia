@@ -1,30 +1,35 @@
 const { getAbout, UpdateAbout } = require("../Repositorio/About_us");
+const catchAsync = require("../Utils/CatchAsync");
+const AppError = require("../Utils/AppError");
 
-exports.getAbouts = async (req, res, next) => {
-  try {
-    const info = await getAbout();
+exports.getAbouts = catchAsync(async (req, res, next) => {
+  const info = await getAbout();
 
-    return res.json({ info });
-  } catch (err) {
-    next(err);
-  }
-};
+  res.locals.response = {
+    status: 200,
+    body: { info }
+  };
+  next();
+});
 
-exports.UpdateAbouts = async (req, res, next) => {
-  const { origen, historia, mision, doctrina, valores, equipo_pastoral } =
-    req.body;
-  try {
-    await UpdateAbout(
-      origen,
-      historia,
-      mision,
-      doctrina,
-      valores,
-      equipo_pastoral
-    );
+exports.UpdateAbouts = catchAsync(async (req, res, next) => {
+  const { origen, historia, mision, doctrina, valores, equipo_pastoral, ID } = req.body;
 
-    res.json({ message: "Post actualizado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
+  if (!ID) return next(new AppError("ID requerido", 400));
+
+  await UpdateAbout(
+    origen,
+    historia,
+    mision,
+    doctrina,
+    valores,
+    equipo_pastoral,
+    ID
+  );
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Información actualizada correctamente" }
+  };
+  next();
+});

@@ -4,35 +4,45 @@ const {
   getExpensesByMonth,
   getMontlyReport,
 } = require("../Repositorio/Reportes");
-exports.getBalances = async (req, res) => {
-  try {
-    const info = await getBalance();
-    return res.json(info);
-  } catch (err) {
-    throw err;
-  }
-};
-exports.getIncomesByMonths = async (req, res) => {
-  try {
-    const info = await getIncomesByMonth();
-    return res.json(info);
-  } catch (err) {
-    throw err;
-  }
-};
-exports.getExpensesByMonths = async (req, res) => {
-  try {
-    const info = await getExpensesByMonth();
-    return res.json(info);
-  } catch (err) {
-    throw err;
-  }
-};
-exports.getMontlyReports = async (req, res) => {
-  try {
-    const info = await getMontlyReport();
-    return res.json(info);
-  } catch (err) {
-    throw err;
-  }
-};
+const AppError = require("../Utils/AppError");
+const catchAsync = require("../Utils/CatchAsync");
+
+exports.getBalances = catchAsync(async (req, res, next) => {
+  const info = await getBalance();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
+
+exports.getIncomesByMonths = catchAsync(async (req, res, next) => {
+  const info = await getIncomesByMonth();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
+
+exports.getExpensesByMonths = catchAsync(async (req, res, next) => {
+  const info = await getExpensesByMonth();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
+
+exports.getMontlyReports = catchAsync(async (req, res, next) => {
+  const info = await getMontlyReport();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});

@@ -10,30 +10,38 @@ const {
 } = require("../Controllers/Contact_MessagesController");
 const { audits } = require("../Controllers/AuditController");
 
-//Obtiene Todos los mensajes
-router.get("/Post", getContact_messages);
-//Añade un mensaje
-router.post(
-  "/Messages/Contact",
-  Auth,
-  audits("Add", "Contact_messages", "Se añadió un Contact_messages"),
-  AddContact_messages
+// Obtiene todos los mensajes
+router.get(
+  '/Panel/Messages', 
+  Auth, 
+  Allow("Pastor"), 
+  getContact_messages,
+  audits("Lectura", "Contact_messages", "Consulta de mensajes de contacto")
 );
 
-//Borra un mensaje
+// Añade un mensaje (Público o Auth dependiendo de tu lógica, aquí mantenemos Auth si es necesario)
 router.post(
-  "/Panel/Messages/DeleteContact_messages",
+  '/Messages/Contact',
+  AddContact_messages,
+  audits("Add", "Contact_messages", "Se envió un nuevo formulario de contacto")
+);
+
+// Borra un mensaje
+router.delete(
+  '/Panel/Messages/Delete/:ID',
   Auth,
   Allow("Pastor"),
-  audits("Delete", "Contact_messages", "Se eliminó un Contact_messages"),
-  DeleteContact_messages
+  DeleteContact_messages,
+  audits("Delete", "Contact_messages", "Se eliminó un mensaje de contacto")
 );
-//Actualiza un mensaje
-router.post(
-  "/Panel/Messages/UpdateContact_messages",
+
+// Actualiza un mensaje
+router.put(
+  '/Panel/Messages/Update',
   Auth,
   Allow("Pastor"),
-  audits("Update", "Contact_messages", "Se actualizó un Contact_messages"),
-  UpdateContact_messages
+  UpdateContact_messages,
+  audits("Update", "Contact_messages", "Se actualizó un mensaje de contacto")
 );
+
 module.exports = router;

@@ -1,71 +1,72 @@
-const { getPost } = require("../Repositorio/Posts");
-const { DeletePost } = require("../Repositorio/Posts");
-const { UpdatePost } = require("../Repositorio/Posts");
-const { AddPost } = require("../Repositorio/Posts");
+const { getPost, DeletePost, UpdatePost, AddPost } = require("../Repositorio/Posts");
+const AppError = require("../Utils/AppError");
+const catchAsync = require("../Utils/CatchAsync");
 
-exports.getPosts = async (req, res, next) => {
-  try {
-    const info = await getPost();
-    res.json({ info });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.DeletePosts = async (req, res, next) => {
+exports.getPosts = catchAsync(async (req, res, next) => {
+  const info = await getPost();
+
+  res.locals.response = {
+    status: 200,
+    body: { info }
+  };
+  next();
+});
+
+exports.DeletePosts = catchAsync(async (req, res, next) => {
   const { ID } = req.params;
-  try {
-    await DeletePost(ID);
+  if (!ID) return next(new AppError("ID es requerido", 400));
 
-    return res.json({ message: "Post eliminado correctamente" });
-  } catch (err) {
-    next(err);
+  await DeletePost(ID);
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Post eliminado correctamente" }
+  };
+  next();
+});
+
+exports.UpdatePostss = catchAsync(async (req, res, next) => {
+  const { Title, SLUG, Content, Enlace, Created_by, Category_id, ID } = req.body;
+
+  let FinalImagen = null;
+  if (req.file) {
+    FinalImagen = req.file.filename;
+  } else if (Enlace && Enlace !== "null" && Enlace !== "") {
+    FinalImagen = Enlace;
   }
-};
-exports.UpdatePostss = async (req, res, next) => {
-  const { Title, SLUG, Content, Enlace, Created_by, Category_id, ID } =
-    req.body;
 
-  try {
-    let FinalImagen = null;
+  await UpdatePost(
+    Title,
+    SLUG,
+    Content,
+    FinalImagen,
+    Created_by,
+    Category_id,
+    ID
+  );
 
-    if (req.file) {
-      FinalImagen = req.file.filename;
-    } else if (Enlace && Enlace !== "null" && Enlace !== "") {
-      FinalImagen = Enlace;
-    }
+  res.locals.response = {
+    status: 200,
+    body: { message: "Post actualizado correctamente" }
+  };
+  next();
+});
 
-    await UpdatePost(
-      Title,
-      SLUG,
-      Content,
-      FinalImagen,
-      Created_by,
-      Category_id,
-      ID,
-    );
-
-    res.json({ message: "Post actualizado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.AddPosts = async (req, res, next) => {
+exports.AddPosts = catchAsync(async (req, res, next) => {
   const { Title, SLUG, Content, Enlace, Created_by, Category_id } = req.body;
 
-  try {
-    let FinalImagen = null;
-
-    if (req.file) {
-      FinalImagen = req.file.filename;
-    } else if (Enlace && Enlace !== "null" && Enlace !== "") {
-      FinalImagen = Enlace;
-    }
-
-    await AddPost(Title, SLUG, Content, FinalImagen, Created_by, Category_id);
-
-    res.json({ message: "Post añadido correctamente" });
-  } catch (err) {
-    next(err);
+  let FinalImagen = null;
+  if (req.file) {
+    FinalImagen = req.file.filename;
+  } else if (Enlace && Enlace !== "null" && Enlace !== "") {
+    FinalImagen = Enlace;
   }
-};
+
+  await AddPost(Title, SLUG, Content, FinalImagen, Created_by, Category_id);
+
+  res.locals.response = {
+    status: 201,
+    body: { message: "Post añadido correctamente" }
+  };
+  next();
+});

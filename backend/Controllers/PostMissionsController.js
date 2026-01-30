@@ -5,96 +5,90 @@ const {
   UpdatePostmissions,
   AddPostmissions,
 } = require("../Repositorio/PostMissions");
+const AppError = require("../Utils/AppError");
+const catchAsync = require("../Utils/CatchAsync");
 
-exports.getALLPostmissionss = async (req, res, next) => {
-  try {
-    const info = await getALLPostmissions();
-    return res.json(info);
-  } catch (err) {
-    next(err);
-  }
-};
+exports.getALLPostmissionss = catchAsync(async (req, res, next) => {
+  const info = await getALLPostmissions();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
 
-exports.getPostmissionss = async (req, res, next) => {
+exports.getPostmissionss = catchAsync(async (req, res, next) => {
   const { ID } = req.params;
-  try {
-    const info = await getPostmissions(ID);
-    return res.json(info);
-  } catch (err) {
-    next(err);
-  }
-};
-exports.DeletePostmissionss = async (req, res, next) => {
-  const { ID } = req.params;
-  try {
-    await DeletePostmissions(ID);
+  const info = await getPostmissions(ID);
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});
 
-    return res.json({ message: "Contenido eliminado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.UpdatePostmissionss = async (req, res, next) => {
+exports.DeletePostmissionss = catchAsync(async (req, res, next) => {
+  const { ID } = req.params;
+  await DeletePostmissions(ID);
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Contenido eliminado correctamente" }
+  };
+  next();
+});
+
+exports.UpdatePostmissionss = catchAsync(async (req, res, next) => {
   const { ID_Missions, Title, Slug, Content, Link, Created_by, ID } = req.body;
 
-  try {
-    
-    let finalVisual = null;
-
-    if (req.file) {
-      
-      finalVisual = req.file.filename;
-    } else if (Link && Link !== "" && Link !== "null") {
-      
-      finalVisual = Link;
-    }
-
-    await UpdatePostmissions(
-      ID_Missions,
-      Title,
-      Slug,
-      Content,
-      finalVisual, 
-      Created_by,
-      ID
-    );
-
-    res.json({ message: "Contenido actualizado correctamente" });
-  } catch (err) {
-    next(err);
+  let finalVisual = null;
+  if (req.file) {
+    finalVisual = req.file.filename;
+  } else if (Link && Link !== "" && Link !== "null") {
+    finalVisual = Link;
   }
-};
 
-exports.AddPostmissionss = async (req, res, next) => {
+  await UpdatePostmissions(
+    ID_Missions,
+    Title,
+    Slug,
+    Content,
+    finalVisual,
+    Created_by,
+    ID
+  );
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Contenido actualizado correctamente" }
+  };
+  next();
+});
+
+exports.AddPostmissionss = catchAsync(async (req, res, next) => {
   const { ID_Missions, Title, Slug, Content, Link, Created_by } = req.body;
 
-  try {
-    let finalVisual = null;
-
-    if (req.file) {
-      finalVisual = req.file.filename;
-    } else if (Link && Link !== "" && Link !== "null") {
-      finalVisual = Link;
-    }
-
-    console.log("Datos a insertar:", {
-      ID_Missions,
-      Title,
-      finalVisual,
-      Created_by,
-    });
-
-    await AddPostmissions(
-      ID_Missions,
-      Title,
-      Slug,
-      Content,
-      finalVisual,
-      Created_by
-    );
-
-    res.json({ message: "Contenido añadido correctamente" });
-  } catch (err) {
-    next(err);
+  let finalVisual = null;
+  if (req.file) {
+    finalVisual = req.file.filename;
+  } else if (Link && Link !== "" && Link !== "null") {
+    finalVisual = Link;
   }
-};
+
+  await AddPostmissions(
+    ID_Missions,
+    Title,
+    Slug,
+    Content,
+    finalVisual,
+    Created_by
+  );
+
+  res.locals.response = {
+    status: 201,
+    body: { message: "Contenido añadido correctamente" }
+  };
+  next();
+});

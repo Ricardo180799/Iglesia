@@ -10,30 +10,40 @@ const {
 } = require("../Controllers/AssetsController");
 const { audits } = require("../Controllers/AuditController");
 
-//Obtiene el inventario
+// Obtiene el inventario
 router.get(
-  "/Panel/Inventario/getAssetss",
+  '/Panel/Inventario/getAssetss',
   Auth,
   Allow("Pastor", "Tesorero", "Dev", "Admin"),
-  getAssetss
-);
-//Añade un recurso
-router.post(
-  "/Panel/Inventario/AddAssetss",
-  Auth,
-  Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Add", "Assets", "Se añadió recurso al inventario"),
-  AddAssetss
+  getAssetss,
+  audits("Lectura", "Assets", "Consulta general del inventario")
 );
 
-//Borra un recurso
-router.delete(
-  `/Panel/Inventario/DeleteAssetss/:Id`,
+// Añade un recurso
+router.post(
+  '/Panel/Inventario/AddAssetss',
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Delete", "Assets", "Se eliminó un recurso del inventario"),
-  DeleteAssetss
+  AddAssetss,
+  audits("Add", "Assets", "Se añadió recurso al inventario")
 );
-//Actualiza un recurso
-router.put("/Panel/Inventario/UpdateAssetss", UpdateAssetss);
+
+// Borra un recurso
+router.delete(
+  '/Panel/Inventario/DeleteAssetss/:ID',
+  Auth,
+  Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  DeleteAssetss,
+  audits("Delete", "Assets", "Se eliminó un recurso del inventario")
+);
+
+// Actualiza un recurso
+router.put(
+  '/Panel/Inventario/UpdateAssetss',
+  Auth,
+  Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  UpdateAssetss,
+  audits("Update", "Assets", "Se actualizó un recurso del inventario")
+);
+
 module.exports = router;

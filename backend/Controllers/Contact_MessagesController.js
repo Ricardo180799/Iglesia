@@ -4,43 +4,55 @@ const {
   UpdateContact_message,
   AddContact_message,
 } = require("../Repositorio/Contact_messages");
+const catchAsync = require("../Utils/CatchAsync");
+const AppError = require("../Utils/AppError");
 
-exports.getContact_messages = async (req, res, next) => {
-  try {
-    const info = await getContact_message();
+exports.getContact_messages = catchAsync(async (req, res, next) => {
+  const info = await getContact_message();
 
-    return res.json({ info });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.DeleteContact_messages = async (req, res, next) => {
-  const { id } = req.body;
-  try {
-    await DeleteContact_message(id);
+  res.locals.response = {
+    status: 200,
+    body: { info }
+  };
+  next();
+});
 
-    return res.json({ message: "Contacto eliminado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.UpdateContact_messages = async (req, res, next) => {
-  const { Name, Email, Phone, Message, Type } = req.body;
-  try {
-    await UpdateContact_message(Name, Email, Phone, Message, Type);
+exports.DeleteContact_messages = catchAsync(async (req, res, next) => {
+  const { ID } = req.params;
 
-    res.json({ message: "Contacto actualizado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.AddContact_messages = async (req, res, next) => {
+  if (!ID) return next(new AppError("ID requerido", 400));
+
+  await DeleteContact_message(ID);
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Contacto eliminado correctamente" }
+  };
+  next();
+});
+
+exports.UpdateContact_messages = catchAsync(async (req, res, next) => {
+  const { Name, Email, Phone, Message, Type, ID } = req.body;
+
+  if (!ID) return next(new AppError("ID requerido", 400));
+
+  await UpdateContact_message(Name, Email, Phone, Message, Type, ID);
+
+  res.locals.response = {
+    status: 200,
+    body: { message: "Contacto actualizado correctamente" }
+  };
+  next();
+});
+
+exports.AddContact_messages = catchAsync(async (req, res, next) => {
   const { Name, Apellidos, Email, Teléfono, Mensaje, Tipo } = req.body;
-  try {
-    await AddContact_message(Name, Apellidos, Email, Teléfono, Mensaje, Tipo);
 
-    res.json({ message: "Formulario enviado correctamente" });
-  } catch (err) {
-    next(err);
-  }
-};
+  await AddContact_message(Name, Apellidos, Email, Teléfono, Mensaje, Tipo);
+
+  res.locals.response = {
+    status: 201,
+    body: { message: "Formulario enviado correctamente" }
+  };
+  next();
+});

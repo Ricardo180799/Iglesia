@@ -1,23 +1,17 @@
 const db = require("../Config/DB");
+
 exports.getPost = async () => {
   const query = "SELECT * FROM posts ";
-
-  try {
-    const [info] = await db.query(query);
-    return info;
-  } catch (err) {
-    throw err;
-  }
+  const [info] = await db.query(query);
+  return info;
 };
+
 exports.DeletePost = async (id) => {
   const query = "DELETE FROM posts WHERE ID = ?";
-  try {
-    await db.execute(query, [id]);
-    return true;
-  } catch (err) {
-    throw err;
-  }
+  await db.execute(query, [id]);
+  return true;
 };
+
 exports.UpdatePost = async (
   Title,
   SLUG,
@@ -28,22 +22,19 @@ exports.UpdatePost = async (
   ID,
 ) => {
   const query =
-    "UPDATE  posts SET Title = ?, SLUG = ?,Content=?,Visual=?,Created_by=?,Category_id=? WHERE ID = ?";
-  try {
-    await db.execute(query, [
-      Title,
-      SLUG,
-      Content,
-      Visual,
-      Created_by,
-      Category_id,
-      ID,
-    ]);
-    return true;
-  } catch (err) {
-    throw err;
-  }
+    "UPDATE posts SET Title = ?, SLUG = ?, Content = ?, Visual = ?, Created_by = ?, Category_id = ? WHERE ID = ?";
+  await db.execute(query, [
+    Title,
+    SLUG,
+    Content,
+    Visual,
+    Created_by,
+    Category_id,
+    ID,
+  ]);
+  return true;
 };
+
 exports.AddPost = async (
   Title,
   SLUG,
@@ -53,18 +44,14 @@ exports.AddPost = async (
   Category_id,
 ) => {
   const query =
-    "INSERT INTO posts (Title,SLUG,Content,Visual,Created_by,Category_id)VALUES(?,?,?,?,?,?)";
-  try {
-    await db.execute(query, [
-      Title,
-      SLUG,
-      Content,
-      Visual,
-      Created_by,
-      Category_id,
-    ]);
-    return true;
-  } catch (err) {
-    throw err;
-  }
+    "INSERT INTO posts (Title, SLUG, Content, Visual, Created_by, Category_id) VALUES (?, ?, ?, ?, ?, ?)";
+  await db.execute(query, [
+    Title,
+    SLUG,
+    Content,
+    Visual,
+    Created_by,
+    Category_id,
+  ]);
+  return true;
 };

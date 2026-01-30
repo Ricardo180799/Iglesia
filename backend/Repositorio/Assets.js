@@ -1,23 +1,17 @@
 const db = require("../Config/DB");
-exports.getAssets = async () => {
-  const query = "SELECT * FROM assets ";
 
-  try {
-    const [info] = await db.query(query);
-    return info;
-  } catch (err) {
-    throw err;
-  }
+exports.getAssets = async () => {
+  const query = "SELECT * FROM assets";
+  const [info] = await db.query(query);
+  return info;
 };
-exports.DeleteAssets = async (Id) => {
-  const query = "DELETE FROM assets WHERE Id = ?";
-  try {
-    await db.execute(query, [Id]);
-    return true;
-  } catch (err) {
-    throw err;
-  }
+
+exports.DeleteAssets = async (ID) => {
+  const query = "DELETE FROM assets WHERE ID = ?";
+  await db.execute(query, [ID]);
+  return true;
 };
+
 exports.UpdateAssets = async (
   Name,
   Cantidad,
@@ -27,27 +21,25 @@ exports.UpdateAssets = async (
   Status,
   Locations,
   Responsible_id,
-  Id
+  ID
 ) => {
   const query =
-    "UPDATE  assets SET Name = ?,Cantidad=?,Category = ?, Adquisition_date=?, Price=?,Status=?, Locations=?, Responsible_id = ? WHERE Id = ?";
-  try {
-    await db.execute(query, [
-      Name,
-      Cantidad,
-      Category,
-      Adquisition_date,
-      Price,
-      Status,
-      Locations,
-      Responsible_id,
-      Id,
-    ]);
-    return true;
-  } catch (err) {
-    throw err;
-  }
+    "UPDATE assets SET Name = ?, Cantidad = ?, Category = ?, Adquisition_date = ?, Price = ?, Status = ?, Locations = ?, Responsible_id = ? WHERE ID = ?";
+  
+  await db.execute(query, [
+    Name,
+    Cantidad,
+    Category,
+    Adquisition_date,
+    Price,
+    Status,
+    Locations,
+    Responsible_id,
+    ID,
+  ]);
+  return true;
 };
+
 exports.AddAssets = async (
   Name,
   Cantidad,
@@ -59,20 +51,17 @@ exports.AddAssets = async (
   Responsible_id
 ) => {
   const query =
-    "INSERT INTO assets (Name,Cantidad, Category, Adquisition_date, Price, Status, Locations,Responsible_id)VALUES(?,?,?,?,?,?,?,?)";
-  try {
-    await db.execute(query, [
-      Name,
-      Cantidad,
-      Category,
-      Adquisition_date,
-      Price,
-      Status,
-      Locations,
-      Responsible_id,
-    ]);
-    return true;
-  } catch (err) {
-    throw err;
-  }
+    "INSERT INTO assets (Name, Cantidad, Category, Adquisition_date, Price, Status, Locations, Responsible_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  
+  await db.execute(query, [
+    Name,
+    Cantidad,
+    Category,
+    Adquisition_date,
+    Price,
+    Status,
+    Locations,
+    Responsible_id,
+  ]);
+  return true;
 };

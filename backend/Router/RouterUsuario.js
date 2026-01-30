@@ -1,82 +1,114 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
-const { getUsersAlls } = require("../Controllers/UsuarioControllers");
-const { ADDRol } = require("../Controllers/UsuarioControllers");
-const { Allow } = require("./MidlewareRol");
-const { UpdateRols } = require("../Controllers/UsuarioControllers");
-const { DeleteUsuarios } = require("../Controllers/UsuarioControllers");
+const router = express.Router();
+
+// Importación de Controladores
+const { 
+  getUsersAlls, 
+  ADDRol, 
+  UpdateRols, 
+  DeleteUsuarios, 
+  Registrarse, 
+  Logout, 
+  Sesions, 
+  Perfil 
+} = require("../Controllers/UsuarioControllers");
 const { audits } = require("../Controllers/AuditController");
 const { Open } = require("../Controllers/ControlController");
+
+// Middlewares
+const { Allow } = require("./MidlewareRol");
+const { Auth } = require("./MidlewareAuth");
+
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
   message: "Has excedido el número de intentos",
 });
-const { Auth } = require("./MidlewareAuth");
-const { Perfil } = require("../Controllers/UsuarioControllers");
-const router = express.Router();
-const { Registrarse } = require("../Controllers/UsuarioControllers");
-const { Logout } = require("../Controllers/UsuarioControllers");
-const { Sesions } = require("../Controllers/UsuarioControllers");
+
+// --- RUTAS PÚBLICAS ---
 
 router.post(
   "/Registrar",
   loginLimiter,
-  audits("Registrar", "users", "Se registro un usuario"),
-  Registrarse
+  Registrarse,
+  audits("Registrar", "users", "Se registró un usuario") // El audit al final para enviar la respuesta
 );
+
 router.post(
   "/Sesion",
   loginLimiter,
-  audits("Sesion", "users", "Inicio sesion un usuario"),
-  Sesions
+  Sesions,
+  audits("Sesion", "users", "Inicio sesión un usuario")
 );
+
 router.post(
   "/Logout",
-
-  Logout
+  Logout,
+  audits("Logout", "users", "Cierre de sesión")
 );
+
+// --- RUTAS PROTEGIDAS ---
+
 router.post(
   "/Perfil",
   Auth,
-  audits("Perfil", "users", " Un usuario entro a su perfil"),
-  Perfil
+  Perfil,
+  audits("Perfil", "users", "Un usuario entró a su perfil")
 );
-//Acceso al panel de ministerio
+
+// Acceso al panel de ministerio (Sin audit de escritura, pero auditamos el acceso si lo deseas)
 router.get(
   "/Ministerio",
   Auth,
   Allow("Pastor", "Misionero", "Tesorero", "Dev", "Admin"),
-  Open
+  Open,
+  audits("Acceso", "panel", "Acceso a Ministerio") 
 );
 
-//Acceso al panel de control
-router.get("/ControlPanel", Auth, Allow("Pastor"), Open);
-//Añadir roles
+// Acceso al panel de control
+router.get(
+  "/ControlPanel", 
+  Auth, 
+  Allow("Pastor"), 
+  Open,
+  audits("Acceso", "panel", "Acceso a Panel de Control")
+);
+
+// Añadir roles
 router.post(
   "/AddRol",
   Auth,
   Allow("Pastor"),
-  audits("AñadirRol", "users", "Se añadio un nuevo rol"),
-  ADDRol
+  ADDRol,
+  audits("AñadirRol", "users", "Se añadió un nuevo rol")
 );
-//Obtener info de la tabla usuarios
-router.get("/Panel/GetUsers", Auth, Allow("Pastor"), getUsersAlls);
-//Modificar el rol de un usuario
+
+// Obtener info de la tabla usuarios (Audit opcional para lectura)
+router.get(
+  "/Panel/GetUsers", 
+  Auth, 
+  Allow("Pastor"), 
+  getUsersAlls,
+  audits("Lectura", "users", "Consulta de lista completa de usuarios")
+);
+
+// Modificar el rol de un usuario
 router.put(
   "/Panel/GetUsers/UpdateRolll",
   Auth,
   Allow("Pastor"),
-  audits("ActualizarRol", "users", "Se actualizo un rol"),
-  UpdateRols
+  UpdateRols,
+  audits("ActualizarRol", "users", "Se actualizó un rol")
 );
-//Eliminar un usuario
+
+// Eliminar un usuario
 router.delete(
-  `/Panel/GetUsers/DeleteUsuario/:ID`,
+  "/Panel/GetUsers/DeleteUsuario/:ID",
   Auth,
   Allow("Pastor"),
-  audits("Delete", "users", "Se elimino un usuario un usuario"),
-  DeleteUsuarios
+  DeleteUsuarios,
+  audits("Delete", "users", "Se eliminó un usuario")
 );
 
 module.exports = router;

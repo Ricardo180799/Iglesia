@@ -4,39 +4,57 @@ const {
   getEspecificAudit,
   DeleteAudit,
 } = require("../Repositorio/Audit");
-exports.audits = (Action, Module, Details) => async (req, res, next) => {
+const catchAsync = require("../Utils/CatchAsync"); 
+
+
+exports.audits = (Action, Module, Details) => catchAsync(async (req, res, next) => {
   const User_Id = req.usuario?.ID ?? null;
-  try {
-    await audit(User_Id, Action, Module, Details);
-    console.log("Accion auditada");
-    next();
-  } catch (err) {
-    next(err);
+
+  await audit(User_Id, Action, Module, Details);
+  console.log(`Acción auditada: ${Action} en ${Module}`);
+
+  if (res.locals.response) {
+    const { status, body } = res.locals.response;
+    return res.status(status).json(body);
   }
-};
-exports.getAudits = async (req, res, next) => {
-  try {
-    const info = await getAudit();
-    return res.json({ info });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.getEspecificAudits = async (req, res, next) => {
-  const { User_Id } = req.body;
-  try {
-    const info = await getEspecificAudit(User_Id);
-    return res.json({ info });
-  } catch (err) {
-    next(err);
-  }
-};
-exports.DeleteAudits = async (req, res, next) => {
-  const { ID } = req.body;
-  try {
-    await DeleteAudit(ID);
-    return res.json({ message: "Audit eliminado" });
-  } catch (err) {
-    next(err);
-  }
-};
+
+  res.status(200).json({
+    status: "success",
+    message: "Operación completada y auditada"
+  });
+});
+
+
+exports.getAudits = catchAsync(async (req, res, next) => {
+  const info = await getAudit();
+  
+  res.status(200).json({
+    status: "success",
+    results: info.length,
+    data: { info }
+  });
+});
+
+
+exports.getEspecificAudits = catchAsync(async (req, res, next) => {
+  const { User_Id } = req.params;
+
+  const info = await getEspecificAudit(User_Id);
+
+  res.status(200).json({
+    status: "success",
+    data: { info }
+  });
+});
+
+
+exports.DeleteAudits = catchAsync(async (req, res, next) => {
+  const { ID } = req.params;
+
+  await DeleteAudit(ID);
+
+  res.status(200).json({
+    status: "success",
+    message: "Registro de auditoría eliminado correctamente"
+  });
+});

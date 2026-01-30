@@ -10,31 +10,40 @@ const {
 } = require("../Controllers/IncomeControllers");
 const { audits } = require("../Controllers/AuditController");
 
-//Obtiene Todos los incomes
-router.get("/Panel/Tesoreria/Incomes", getIncomess);
-//Añade un income
+
+router.get(
+  "/Panel/Tesoreria/Incomes", 
+  Auth, 
+  Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  getIncomess,
+  audits("Lectura", "Income", "Consulta general de ingresos")
+);
+
+
 router.post(
   "/Panel/Tesoreria/Incomes/Add",
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Add", "Income", "Se añadió un income"),
-  AddIncomes
+  AddIncomes,
+  audits("Add", "Income", "Se añadió un ingreso")
 );
 
-//Borra un Income
-router.post(
-  "/Panel/Tesoreía/Incomes/DeleteIncomes",
+
+router.delete(
+  `/Panel/Tesoreria/Incomes/Delete/:ID`,
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Delete", "Income", "Se eliminó un Income"),
-  DeleteIncomes
+  DeleteIncomes,
+  audits("Delete", "Income", "Se eliminó un ingreso")
 );
-//Actualiza un income
-router.post(
-  "/Panel/Tesorería/Incomes/UpdateIncomes",
+
+
+router.put(
+  "/Panel/Tesoreria/Incomes/Update",
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
-  audits("Update", "Misiones", "Se actualizó un Income"),
-  UpdateIncomes
+  UpdateIncomes,
+  audits("Update", "Income", "Se actualizó un ingreso")
 );
+
 module.exports = router;

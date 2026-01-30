@@ -1,33 +1,35 @@
 const { UpdateHome, getHome, getHomesConfig } = require("../Repositorio/Home");
+const catchAsync = require("../Utils/CatchAsync");
 
-exports.UpdateHomes = async (req, res) => {
-  try {
-    const { Campo, Valor } = req.body;
-    const ID = 1;
+exports.UpdateHomes = catchAsync(async (req, res, next) => {
+  const { Campo, Valor } = req.body;
+  const ID = 1;
 
-    await UpdateHome(Campo, Valor, ID);
+  await UpdateHome(Campo, Valor, ID);
 
-    return res.json({
-      message: "Configuración Home actualizada correctamente",
-    });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-};
+  res.locals.response = {
+    status: 200,
+    body: { message: "Configuración Home actualizada correctamente" }
+  };
+  next();
+});
 
-exports.getHomesFront = async (req, res) => {
-  try {
-    const info = await getHome();
-    return res.json({ info });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-};
-exports.getHomeConfigs = async (req, res) => {
-  try {
-    const info = await getHomesConfig();
-    return res.json(info);
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-};
+exports.getHomesFront = catchAsync(async (req, res, next) => {
+  const info = await getHome();
+  
+  res.locals.response = {
+    status: 200,
+    body: { info }
+  };
+  next();
+});
+
+exports.getHomeConfigs = catchAsync(async (req, res, next) => {
+  const info = await getHomesConfig();
+  
+  res.locals.response = {
+    status: 200,
+    body: info
+  };
+  next();
+});

@@ -12,36 +12,42 @@ const {
 const { uploadClouds } = require("./MidlewareFile");
 const { audits } = require("../Controllers/AuditController");
 
-//Obtiene Todas las misiones
-router.get("/Missions", getMissionss);
+router.get(
+  "/Missions", 
+  getMissionss, 
+  audits("Lectura", "Missions", "Consulta general de misiones")
+);
 
-//Obtiene la info de una misión en específico
-router.get(`/EspecificMissions/:ID`, getEspecificMissionss);
+router.get(
+  "/EspecificMissions/:ID", 
+  getEspecificMissionss, 
+  audits("Lectura", "Missions", "Consulta detallada de una misión")
+);
 
-//Añade una misión
 router.post(
   "/Missions/Agregar",
   Auth,
   Allow("Pastor", "Misionero"),
   uploadClouds,
   AddMissionss,
-  audits("Add", "Missions", "Se añadió una nueva Misión"),
+  audits("Add", "Missions", "Se añadió una nueva Misión")
 );
-//Borra una Misión
+
 router.delete(
-  `/Missions/DeleteMissionss/:ID`,
+  "/Missions/DeleteMissionss/:ID",
   Auth,
   Allow("Pastor"),
   DeleteMissionss,
-  audits("Delete", "Missions", "Se eliminó una  misión"),
+  audits("Delete", "Missions", "Se eliminó una misión")
 );
-//Actualiza una Misión
+
 router.put(
   "/Missions/UpdateMissionss",
   Auth,
   Allow("Pastor", "Misionero"),
   uploadClouds,
   UpdateMissionss,
-  audits("Update", "Missions", "Se actualizó una  misión"),
+  audits("Update", "Missions", "Se actualizó una misión")
 );
+
 module.exports = router;

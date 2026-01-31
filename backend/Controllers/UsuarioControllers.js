@@ -22,7 +22,14 @@ exports.getUsersAlls = catchAsync(async (req, res, next) => {
 });
 
 exports.Registrarse = catchAsync(async (req, res, next) => {
-  const registro = await Registro(req.body);
+  
+  const datosParaRegistro = {
+    ...req.body,
+    Avatar: req.file ? req.file.path : null 
+  };
+
+  const registro = await Registro(datosParaRegistro);
+  
   if (!registro) throw new AppError("Error al procesar el registro", 400);
 
   const { ID, Name, Email, Rol } = registro.data;

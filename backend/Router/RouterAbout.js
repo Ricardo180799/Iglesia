@@ -7,13 +7,13 @@ const { audits } = require("../Controllers/AuditController");
 
 // Obtiene la info de About us
 router.get(
-  '/About', 
-  getAbouts
+  "/About", 
+  getAbouts,audits("Read", "About_us", "Se consultó la información de Nosotros")
 );
 
 // Actualiza la info de About us
 router.put(
-  '/Panel/About/Update',
+  "/About/Update",
   Auth,
   Allow("Pastor"),
   UpdateAbouts,

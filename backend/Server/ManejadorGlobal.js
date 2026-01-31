@@ -2,7 +2,7 @@ exports.Manejador = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  // Si estás en desarrollo o si NO has definido NODE_ENV aún
+  
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     return res.status(err.statusCode).json({
       status: err.status,
@@ -12,9 +12,9 @@ exports.Manejador = (err, req, res, next) => {
     });
   }
 
-  // Si estás en producción
+  
   if (process.env.NODE_ENV === 'production') {
-    if (err.isOperational) { // Usualmente AppError marca isOperational = true
+    if (err.isOperational) { 
       return res.status(err.statusCode).json({
         status: err.status,
         message: err.message

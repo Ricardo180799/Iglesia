@@ -46,7 +46,7 @@ export const getAllTestimonies = async()=>{
 export const getAllPost= async()=>{
   try {
     const response = await api.get("/Api/Post")
-    return response.data.info
+    return response?.data?.body?.info || response?.data?.info || []
   }catch(err){throw err}
 }
 export const getAboutUs = async()=>{
@@ -61,5 +61,11 @@ export const check = async()=>{
     const response = await api.get("/Api/Ministerio")
     return response.data.message
     
+  }catch(err){throw err}
+}
+export const updateAbout = async(name,info)=>{
+  try{
+    await api.put("/Api/About/Update",{name,info})
+    return "Info actualizada"
   }catch(err){throw err}
 }

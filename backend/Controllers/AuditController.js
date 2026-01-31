@@ -15,6 +15,7 @@ exports.audits = (Action, Module, Details) => catchAsync(async (req, res, next) 
 
   if (res.locals.response) {
     const { status, body } = res.locals.response;
+    
     return res.status(status).json(body);
   }
 

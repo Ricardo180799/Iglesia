@@ -3,6 +3,7 @@ const rateLimit = require("express-rate-limit");
 const router = express.Router();
 
 // Importación de Controladores
+const { uploadClouds } = require("./MidlewareFile");
 const { 
   getUsersAlls, 
   ADDRol, 
@@ -31,6 +32,7 @@ const loginLimiter = rateLimit({
 router.post(
   "/Registrar",
   loginLimiter,
+  uploadClouds,
   Registrarse,
   audits("Registrar", "users", "Se registró un usuario") // El audit al final para enviar la respuesta
 );

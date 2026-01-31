@@ -13,18 +13,12 @@ exports.getAbouts = catchAsync(async (req, res, next) => {
 });
 
 exports.UpdateAbouts = catchAsync(async (req, res, next) => {
-  const { origen, historia, mision, doctrina, valores, equipo_pastoral, ID } = req.body;
+  const { name,info } = req.body;
 
-  if (!ID) return next(new AppError("ID requerido", 400));
+ 
 
   await UpdateAbout(
-    origen,
-    historia,
-    mision,
-    doctrina,
-    valores,
-    equipo_pastoral,
-    ID
+    name,info
   );
 
   res.locals.response = {

@@ -11,6 +11,12 @@ const {
 } = require("../Controllers/MissionssController");
 const { uploadClouds } = require("./MidlewareFile");
 const { audits } = require("../Controllers/AuditController");
+const validate = require ("../Utils/Validator")
+const {addMissionsSchema,
+  updateMissionsSchema,
+  deleteMissionsSchema,
+  getSpecificMissionSchema} = require("../Schema/SchemaMissions")
+
 
 router.get(
   "/Missions", 
@@ -19,7 +25,7 @@ router.get(
 );
 
 router.get(
-  "/EspecificMissions/:ID", 
+  "/EspecificMissions/:ID", validate(getSpecificMissionSchema),
   getEspecificMissionss, 
   audits("Lectura", "Missions", "Consulta detallada de una misión")
 );
@@ -28,6 +34,7 @@ router.post(
   "/Missions/Agregar",
   Auth,
   Allow("Pastor", "Misionero"),
+  validate(addMissionsSchema),
   uploadClouds,
   AddMissionss,
   audits("Add", "Missions", "Se añadió una nueva Misión")
@@ -37,6 +44,7 @@ router.delete(
   "/Missions/DeleteMissionss/:ID",
   Auth,
   Allow("Pastor"),
+  validate(deleteMissionsSchema),
   DeleteMissionss,
   audits("Delete", "Missions", "Se eliminó una misión")
 );
@@ -45,6 +53,7 @@ router.put(
   "/Missions/UpdateMissionss",
   Auth,
   Allow("Pastor", "Misionero"),
+  validate(updateMissionsSchema),
   uploadClouds,
   UpdateMissionss,
   audits("Update", "Missions", "Se actualizó una misión")

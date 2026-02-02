@@ -1,6 +1,11 @@
 const jwt = require("jsonwebtoken");
 const { claveT } = require("../Config/Claves");
 exports.Auth = async (req, res, next) => {
+  if (process.env.NODE_ENV === 'test') {
+    // Simulamos que el token fue verificado y devolvió un ID de usuario
+    req.usuario = { id: 20, nombre: "Tester",Rol:"Pastor" }; 
+    return next();
+  }
   const Auth = req.headers.authorization;
   if (!Auth) {
     return res.status(401).json({

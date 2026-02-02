@@ -9,6 +9,8 @@ const {
   AddAssetss,
 } = require("../Controllers/AssetsController");
 const { audits } = require("../Controllers/AuditController");
+const validate = require ("../Utils/Validator") 
+const {addAssetsSchema,updateAssetsSchema,deleteAssetsSchema} = require("../Schema/SchemaAssets")
 
 // Obtiene el inventario
 router.get(
@@ -24,6 +26,7 @@ router.post(
   '/Panel/Inventario/AddAssetss',
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  validate(addAssetsSchema),
   AddAssetss,
   audits("Add", "Assets", "Se añadió recurso al inventario")
 );
@@ -33,6 +36,7 @@ router.delete(
   '/Panel/Inventario/DeleteAssetss/:ID',
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  validate(deleteAssetsSchema),
   DeleteAssetss,
   audits("Delete", "Assets", "Se eliminó un recurso del inventario")
 );
@@ -42,6 +46,7 @@ router.put(
   '/Panel/Inventario/UpdateAssetss',
   Auth,
   Allow("Pastor", "Tesorero", "Admin", "Dev"),
+  validate(updateAssetsSchema),
   UpdateAssetss,
   audits("Update", "Assets", "Se actualizó un recurso del inventario")
 );

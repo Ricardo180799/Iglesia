@@ -15,6 +15,14 @@ const {
   Perfil 
 } = require("../Controllers/UsuarioControllers");
 const { audits } = require("../Controllers/AuditController");
+const validate = require ("../Utils/Validator");
+const { 
+  registroSchema,
+  loginSchema,
+  addRolSchema,
+  updateRolSchema,
+  deleteUsuarioSchema 
+} = require("../Schema/SchemaAssets");
 const { Open } = require("../Controllers/ControlController");
 
 // Middlewares
@@ -32,14 +40,16 @@ const loginLimiter = rateLimit({
 router.post(
   "/Registrar",
   loginLimiter,
-  uploadClouds,
+  uploadClouds, // Multer primero para procesar el body
+  validate(registroSchema), // Luego validamos con Zod
   Registrarse,
-  audits("Registrar", "users", "Se registró un usuario") // El audit al final para enviar la respuesta
+  audits("Registrar", "users", "Se registró un usuario")
 );
 
 router.post(
   "/Sesion",
   loginLimiter,
+  validate(loginSchema),
   Sesions,
   audits("Sesion", "users", "Inicio sesión un usuario")
 );
@@ -59,7 +69,6 @@ router.post(
   audits("Perfil", "users", "Un usuario entró a su perfil")
 );
 
-// Acceso al panel de ministerio (Sin audit de escritura, pero auditamos el acceso si lo deseas)
 router.get(
   "/Ministerio",
   Auth,
@@ -68,7 +77,6 @@ router.get(
   audits("Acceso", "panel", "Acceso a Ministerio") 
 );
 
-// Acceso al panel de control
 router.get(
   "/ControlPanel", 
   Auth, 
@@ -77,16 +85,15 @@ router.get(
   audits("Acceso", "panel", "Acceso a Panel de Control")
 );
 
-// Añadir roles
 router.post(
   "/AddRol",
   Auth,
   Allow("Pastor"),
+  validate(addRolSchema),
   ADDRol,
   audits("AñadirRol", "users", "Se añadió un nuevo rol")
 );
 
-// Obtener info de la tabla usuarios (Audit opcional para lectura)
 router.get(
   "/Panel/GetUsers", 
   Auth, 
@@ -95,20 +102,20 @@ router.get(
   audits("Lectura", "users", "Consulta de lista completa de usuarios")
 );
 
-// Modificar el rol de un usuario
 router.put(
   "/Panel/GetUsers/UpdateRolll",
   Auth,
   Allow("Pastor"),
+  validate(updateRolSchema),
   UpdateRols,
   audits("ActualizarRol", "users", "Se actualizó un rol")
 );
 
-// Eliminar un usuario
 router.delete(
   "/Panel/GetUsers/DeleteUsuario/:ID",
   Auth,
   Allow("Pastor"),
+  validate(deleteUsuarioSchema),
   DeleteUsuarios,
   audits("Delete", "users", "Se eliminó un usuario")
 );

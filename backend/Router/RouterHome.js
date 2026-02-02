@@ -8,6 +8,8 @@ const {
   getHomeConfigs,
 } = require("../Controllers/HomeController");
 const { audits } = require("../Controllers/AuditController");
+const validate = require ("../Utils/Validator")
+const {updateHomeSchema} = require("../Schema/SchemaHome")
 
 router.get(
   "/Panel/homee", 
@@ -27,6 +29,7 @@ router.put(
   "/Panel/home/UpdateHomes",
   Auth,
   Allow("Pastor"),
+  validate(updateHomeSchema),
   UpdateHomes,
   audits("Update", "Home", "Se actualizó la configuración del home")
 );

@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { Auth } = require("./MidlewareAuth");
 const { Allow } = require("./MidlewareRol");
+const validate = require ("../Utils/Validator")
+const {createActivitySchema,updateActivitySchema,deleteActivitySchema} = require("../Schema/SchemaAbout")
 const {
   getActivitiess,
   DeleteActivitiess,
@@ -19,6 +21,7 @@ router.post(
   "/AddActivitiess",
   Auth,
   Allow("Pastor"),
+  validate(createActivitySchema),
   uploadClouds,
   AddActivitiess,
   audits("Add", "Actividades", "Se añadió una nueva Actividad")
@@ -28,6 +31,7 @@ router.delete(
   `/DeleteActivitiess/:ID`,
   Auth,
   Allow("Pastor"),
+  validate(deleteActivitySchema),
   DeleteActivitiess,
   audits("Delete", "Actividades", "Se eliminó una  Actividad")
 );
@@ -37,6 +41,7 @@ router.put(
   "/UpdateActivitiess",
   Auth,
   Allow("Pastor"),
+  validate(updateActivitySchema),
   UpdateActivitiess,
   audits("Update", "Actividades", "Se actualizó una  Actividad")
 );

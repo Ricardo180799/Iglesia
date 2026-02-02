@@ -17,7 +17,7 @@ export default function AboutForm({ setFormulario, name, dato, refresh }) {
     setError("");
 
     try {
-      // Llamada al servicio: updateAbout(columna, valor)
+      
       await updateAbout(name, content);
       
       refresh(); // Refresca la información en la pantalla principal

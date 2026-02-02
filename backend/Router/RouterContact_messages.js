@@ -9,6 +9,8 @@ const {
   AddContact_messages,
 } = require("../Controllers/Contact_MessagesController");
 const { audits } = require("../Controllers/AuditController");
+const validate = require("../Utils/Validator")
+const {addContactSchema,updateContactSchema,deleteContactSchema} = require("../Schema/SchemaContact")
 
 // Obtiene todos los mensajes
 router.get(
@@ -22,6 +24,7 @@ router.get(
 // Añade un mensaje (Público o Auth dependiendo de tu lógica, aquí mantenemos Auth si es necesario)
 router.post(
   '/Messages/Contact',
+  validate(addContactSchema),
   AddContact_messages,
   audits("Add", "Contact_messages", "Se envió un nuevo formulario de contacto")
 );
@@ -31,6 +34,7 @@ router.delete(
   '/Panel/Messages/Delete/:ID',
   Auth,
   Allow("Pastor"),
+   validate( deleteContactSchema),
   DeleteContact_messages,
   audits("Delete", "Contact_messages", "Se eliminó un mensaje de contacto")
 );
@@ -40,6 +44,7 @@ router.put(
   '/Panel/Messages/Update',
   Auth,
   Allow("Pastor"),
+  validate( updateContactSchema),
   UpdateContact_messages,
   audits("Update", "Contact_messages", "Se actualizó un mensaje de contacto")
 );

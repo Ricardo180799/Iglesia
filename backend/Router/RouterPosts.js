@@ -10,6 +10,10 @@ const {
 } = require("../Controllers/PostsController");
 const { audits } = require("../Controllers/AuditController");
 const { uploadClouds } = require("./MidlewareFile");
+const validate = require ("../Utils/Validator")
+const {addPostSchema,
+  updatePostSchema,
+  deletePostSchema} = require("../Schema/SchemaPost")
 
 router.get(
   "/Post", 
@@ -21,6 +25,7 @@ router.post(
   "/Posts/Agregar",
   Auth,
   Allow("Pastor"),
+  validate(addPostSchema),
   uploadClouds,
   AddPosts,
   audits("Add", "Posts", "Se añadió un nuevo Post")
@@ -30,6 +35,7 @@ router.delete(
   "/Posts/DeletePost/:ID",
   Auth,
   Allow("Pastor"),
+  validate(deletePostSchema),
   DeletePosts,
   audits("Delete", "Posts", "Se eliminó un Post")
 );
@@ -38,6 +44,7 @@ router.put(
   "/Posts/UpdatePostss",
   Auth,
   Allow("Pastor"),
+  validate(updatePostSchema),
   uploadClouds,
   UpdatePostss,
   audits("Update", "Posts", "Se actualizó un Post")

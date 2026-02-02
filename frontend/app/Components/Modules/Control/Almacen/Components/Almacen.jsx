@@ -51,8 +51,7 @@ export default function ListaAssets() {
             
             setFunctions(() => addAssets);
             setDato(null);
-            console.log("ewfewfewfew ",dato, onClose,functions)
-            setOnclose(true);
+          
             
             
           }}
@@ -96,7 +95,7 @@ export default function ListaAssets() {
                 className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
                 onClick={async () => {
                   const Id = asset.Id
-                  console.log("iddddddd ", Id)
+                 
                   await deleteAssets(Id);
                   refresh()
                 }}

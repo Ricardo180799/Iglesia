@@ -11,7 +11,13 @@ exports.Manejador = (err, req, res, next) => {
       stack: err.stack
     });
   }
-
+if (err.isOperational) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+      success: false // Añade esto para que tus tests coincidan
+    });
+  }
   
   if (process.env.NODE_ENV === 'production') {
     if (err.isOperational) { 
@@ -21,7 +27,7 @@ exports.Manejador = (err, req, res, next) => {
       });
     }
 
-    console.error('ERROR CRÍTICO 💥:', err);
+    console.error('ERROR CRÍTICOoooooooo 💥:', err);
     return res.status(500).json({
       status: 'error',
       message: 'Algo salió muy mal'
